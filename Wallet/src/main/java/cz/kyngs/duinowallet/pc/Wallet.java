@@ -28,6 +28,7 @@ import joptsimple.OptionSpec;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.Properties;
 
 public class Wallet {
 
@@ -49,6 +50,8 @@ public class Wallet {
     public Wallet(String[] args) throws Exception {
         instance = this;
         System.setProperty("sun.awt.noerasebackground", "true");
+        Properties props = System.getProperties();
+        props.setProperty("javax.accessibility.assistive_technologies", "");
         Runtime.getRuntime().addShutdownHook(new Thread(() -> new Stopper(this), "Stopper"));
 
         authenticationLock = new Object();
@@ -124,7 +127,7 @@ public class Wallet {
      * Should be called after window initialization!
      *
      * @param args Program arguments.
-     * @return Program Configuration.
+     *
      */
     private void parseArgs(String[] args) {
 
