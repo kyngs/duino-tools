@@ -26,6 +26,12 @@ package cz.kyngs.duinotools.wallet.logging;
 
 import java.io.PrintStream;
 
+/**
+ * Simple LogManager
+ *
+ * @author kyngs
+ * @see Logger
+ */
 public class LogManager {
 
     private static final PrintStream OUT;
@@ -36,8 +42,13 @@ public class LogManager {
         ERR = System.err;
     }
 
+    /**
+     * @param debug debug state of Logger
+     * @return Logger
+     * @see Logger#Logger(boolean, PrintStream, PrintStream)
+     */
     public Logger createLogger(boolean debug) {
-        return new Logger(debug, OUT, ERR);
+        return new Logger(debug, ERR, OUT);
     }
 
 }

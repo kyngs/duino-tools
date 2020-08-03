@@ -26,6 +26,14 @@ package cz.kyngs.duinotools.wallet.utils;
 
 import java.util.Map;
 
+/**
+ * Simple implementation of Entry.
+ *
+ * @param <K> Key
+ * @param <V> Value
+ * @author kyngs
+ * @see java.util.Map.Entry
+ */
 public class EntryImpl<K, V> implements Map.Entry<K, V> {
     private final K key;
     private V value;

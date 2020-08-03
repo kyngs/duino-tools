@@ -37,46 +37,56 @@ public class MinerThread implements Runnable {
     private int acceptedShares;
     private int refusedShares;
     private boolean run;
+    private Network network;
+    private int hashCountPerSecond;
 
-    public MinerThread(Miner miner, int ID, MinerThreadGroup parent) {
+    public MinerThread(Miner miner, int ID, MinerThreadGroup parent, Network network) {
         this.miner = miner;
         id = ID;
         hashCount = 0;
         this.parent = parent;
         run = true;
+        this.network = network;
         new Thread(parent, this, String.format("Miner Thread/%d", ID)).start();
     }
 
     @Override
     public void run() {
-        Network network = miner.getNetwork();
         while (run) {
             try {
                 network.write("JOB");
                 String jobImpl = network.read(1024);
                 String[] job = jobImpl.split(",");
-                int difficulty = Integer.parseInt(job[2].substring(1));
-                System.out.println(difficulty);
+                int difficulty = Integer.parseInt(job[2].trim());
                 for (int i = 0; i < difficulty * 100 + 1; i++) {
                     hashCount++;
+                    hashCountPerSecond++;
                     String hash = CryptoUtil.hash(job[0] + i);
                     if (job[1].contentEquals(hash)) {
                         network.write(String.valueOf(i));
                         String feedback = network.read(1024);
 
-                        if (feedback.contentEquals("GOOD")) {
+                        if (feedback.trim().equals("GOOD")) {
                             acceptedShares++;
+
                         } else {
                             refusedShares++;
                         }
                         break;
-                    } else {
-                        System.out.println(hash + " vs " + job[1]);
                     }
                 }
             } catch (Exception e) {
-                Miner.LOGGER.error("Error while processing cycle: ", e);
+                Miner.LOGGER.error("Error while processing cycle: ");
+                e.printStackTrace();
             }
         }
+    }
+
+    public int getHashCountPerSecond() {
+        return hashCountPerSecond;
+    }
+
+    public void setHashCountPerSecond(int hashCountPerSecond) {
+        this.hashCountPerSecond = hashCountPerSecond;
     }
 }

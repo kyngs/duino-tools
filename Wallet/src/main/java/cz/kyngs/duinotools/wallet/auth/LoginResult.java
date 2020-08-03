@@ -24,6 +24,12 @@
 
 package cz.kyngs.duinotools.wallet.auth;
 
+/**
+ * Enum for login result.
+ *
+ * @author kyngs
+ * @see AuthCore
+ */
 public enum LoginResult {
 
     OK, NO

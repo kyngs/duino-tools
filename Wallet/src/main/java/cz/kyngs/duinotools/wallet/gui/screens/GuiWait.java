@@ -31,11 +31,21 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Gui used as a Waiting screen. Contains ProgressBar
+ *
+ * @author kyngs
+ * @see cz.kyngs.duinotools.wallet.gui.GuiScreen
+ * @see JProgressBar
+ */
 public class GuiWait extends GuiScreen {
 
     private final List<JLabel> jLabels;
     protected JProgressBar jProgressBar;
 
+    /**
+     * @param message Waiting message
+     */
     public GuiWait(String message) {
 
         setLayout(null);
@@ -64,6 +74,10 @@ public class GuiWait extends GuiScreen {
         displayLoadingAnimation();
     }
 
+    /**
+     * Called to display JProgressBar
+     * Can be overridden so there may be something other than JProgressBar
+     */
     protected void displayLoadingAnimation() {
         jProgressBar.setSize(getWidth() / 2, getHeight() / 10);
         jProgressBar.setLocation(getWidth() / 2 - jProgressBar.getWidth() / 2, getHeight() - jProgressBar.getHeight() * 2);

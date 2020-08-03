@@ -28,10 +28,22 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
+/**
+ * Gui for displaying some info with button.
+ *
+ * @author kyngs
+ * @see cz.kyngs.duinotools.wallet.gui.GuiScreen
+ * @see cz.kyngs.duinotools.wallet.gui.screens.GuiWait
+ */
 public class GuiInfo extends GuiWait {
 
     private final JButton okayButton;
 
+    /**
+     *
+     * @param message Message
+     * @param onActionPerformed What will happen when button OK is pressed.
+     */
     public GuiInfo(String message, Runnable onActionPerformed) {
         super(message);
         remove(jProgressBar);
@@ -54,6 +66,9 @@ public class GuiInfo extends GuiWait {
         okayButton.setLocation(getWidth() / 2 - okayButton.getWidth() / 2, getHeight() - okayButton.getHeight() * 2);
     }
 
+    /**
+     * Overridden from GuiWait so ProgressBar is not displayed.
+     */
     @Override
     protected void displayLoadingAnimation() {
     }

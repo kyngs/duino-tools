@@ -22,26 +22,27 @@
  * SOFTWARE.
  */
 
-package cz.kyngs.duinotools.miner.core;
+package cz.kyngs.duinotools.miner.core.pool;
 
 import cz.kyngs.duinotools.miner.Miner;
 import cz.kyngs.duinotools.miner.network.Network;
+import cz.kyngs.duinotools.miner.utils.thread.MultiThreadUtil;
 
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class MinerThreadGroup extends ThreadGroup {
+public class JobPool {
+    private final Map<Network, String[]> free;
+    private MultiThreadUtil multiThreadUtil;
+    private Map<Thread, Network> jobs;
+    private Network[] networks;
 
-    private final MinerThread[] minerThreads;
-
-    private Timer timer;
-
-    public MinerThreadGroup(int count, Miner miner) {
-        super("Miner");
-        minerThreads = new MinerThread[count];
-        timer = new Timer();
-        Network[] networks = new Network[count];
+    public JobPool(int threads, Miner miner) {
+        jobs = new ConcurrentHashMap<>();
+        free = new ConcurrentHashMap<>();
+        multiThreadUtil = new MultiThreadUtil("Job Network", threads);
+        networks = new Network[threads];
         for (int i = 0; i < networks.length; i++) {
             try {
                 networks[i] = new Network(miner);
@@ -49,24 +50,24 @@ public class MinerThreadGroup extends ThreadGroup {
                 e.printStackTrace();
             }
         }
-        for (int i = 0; i < minerThreads.length; i++) {
-            minerThreads[i] = new MinerThread(miner, i, this, networks[i]);
-        }
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                int hs = 0;
-                for (MinerThread minerThread : minerThreads) {
-                    hs += minerThread.getHashCountPerSecond();
-                    minerThread.setHashCountPerSecond(0);
-                }
-                System.out.println(hs);
-            }
-        }, 1000, 1000);
     }
 
-    public Timer getTimer() {
-        return timer;
+    public String[] getJob() {
+        while (free.isEmpty()) try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Network mine;
+        String[] job;
+        synchronized (free) {
+            mine = free.keySet().iterator().next();
+            job = free.get(mine);
+            free.remove(mine);
+        }
+        jobs.put(Thread.currentThread(), mine);
+        return job;
     }
+
 
 }

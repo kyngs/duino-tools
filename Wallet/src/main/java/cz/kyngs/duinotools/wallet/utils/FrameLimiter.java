@@ -31,6 +31,7 @@ package cz.kyngs.duinotools.wallet.utils;
  * in it's constructor.
  *
  * @author Joseph Lenton - JosephLenton@StudioFortress.com
+ * NOTE: Class taken from some StackOverflow page.
  */
 public class FrameLimiter {
     // the number of milliseconds each frame should take

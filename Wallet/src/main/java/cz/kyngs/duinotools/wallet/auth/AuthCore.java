@@ -31,15 +31,29 @@ import cz.kyngs.duinotools.wallet.utils.thread.ThreadUtil;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
+/**
+ * Main authenticating logic with it's own thread.
+ *
+ * @author kyngs
+ * @see cz.kyngs.duinotools.wallet.utils.thread.ThreadUtil
+ */
 public class AuthCore extends ThreadUtil {
 
     private final Wallet wallet;
 
+    /**
+     * @param wallet Main class
+     */
     public AuthCore(Wallet wallet) {
         super("Authentication");
         this.wallet = wallet;
     }
 
+    /**
+     * @param username Username
+     * @param password Password
+     * @param consumer Consumer called after login ended.
+     */
     public void authorize(String username, String password, Consumer<Entry<LoginResult, String>> consumer) {
         scheduleTask(() -> {
             int timeout = 0;
@@ -59,6 +73,9 @@ public class AuthCore extends ThreadUtil {
                             case NO: {
                                 String input = wallet.getNetwork().readLine();
                                 reason = input == null ? "Undefined" : input.substring(1);
+                                if (reason.contentEquals("Undefined")) {
+                                    continue;
+                                }
                                 break;
                             }
                             case OK: {
@@ -66,6 +83,7 @@ public class AuthCore extends ThreadUtil {
                                     wallet.getAuthenticationLock().notifyAll();
                                 }
                             }
+
                         }
                     } catch (Exception e) {
                         timeout++;
@@ -75,7 +93,6 @@ public class AuthCore extends ThreadUtil {
                     break;
                 }
             }
-            ;
         });
 
     }

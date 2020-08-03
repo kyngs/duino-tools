@@ -28,6 +28,11 @@ import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Logger that is used everywhere for logging.
+ *
+ * @author kyngs
+ */
 public final class Logger {
 
     private final DateTimeFormatter formatter;
@@ -35,6 +40,14 @@ public final class Logger {
     private final PrintStream originalOut;
     private final boolean debug;
 
+    /**
+     * Only constructor of Logger.
+     * @param debug debug state.
+     * @param originalErr Original System.err
+     * @param originalOut Original System.out
+     * @see System#out
+     * @see System#err
+     */
     protected Logger(boolean debug, PrintStream originalErr, PrintStream originalOut) {
         this.originalErr = originalErr;
         this.originalOut = originalOut;
@@ -44,26 +57,57 @@ public final class Logger {
         this.debug = debug;
     }
 
+    /**
+     * @param message Message
+     * @param throwables Throwables
+     */
     public void info(String message, Throwable... throwables) {
         write(message, Level.INFO, throwables);
     }
 
+    /**
+     *
+     * @param message Debug message
+     * @param throwables Throwables
+     */
     public void debug(String message, Throwable... throwables) {
         if (debug) write(message, Level.DEBUG, throwables);
     }
 
+    /**
+     *
+     * @param message warning message
+     * @param throwables Throwables
+     */
     public void warn(String message, Throwable... throwables) {
         write(message, Level.WARN, throwables);
     }
 
+    /**
+     *
+     * @param message Error message
+     * @param throwables Throwables
+     */
     public void error(String message, Throwable... throwables) {
         write(message, Level.ERROR, throwables);
     }
 
+    /**
+     *
+     * @param message Message
+     * @param level Level
+     * @param throwables throwables
+     */
     private void write(String message, Level level, Throwable... throwables) {
         write(message, level, 3, throwables);
     }
 
+    /**
+     * @param message Message
+     * @param level Level
+     * @param reflectionLevel StackTrace level
+     * @param throwables Throwables
+     */
     protected void write(String message, Level level, int reflectionLevel, Throwable... throwables) {
         if (reflectionLevel != -1) {
             StackTraceElement pos = new Throwable().getStackTrace()[reflectionLevel];
@@ -79,13 +123,13 @@ public final class Logger {
 
         for (Throwable throwable : throwables) {
             if (throwable == null || throwable.getMessage() == null) continue;
-            write(String.format("%s: %s", throwable.getClass().getName(), throwable.getMessage()), level, reflectionLevel);
+            write(String.format("%s: %s", throwable.getClass().getName(), throwable.getMessage()), level, reflectionLevel +1);
             for (StackTraceElement trace : throwable.getStackTrace()) {
 
-                write(String.format("\t%s", trace.toString()), level, reflectionLevel);
+                write(String.format("\t%s", trace.toString()), level, reflectionLevel +1);
 
             }
-            write(message, level, reflectionLevel, throwable.getCause());
+            write(message, level, reflectionLevel + 1, throwable.getCause());
         }
 
     }

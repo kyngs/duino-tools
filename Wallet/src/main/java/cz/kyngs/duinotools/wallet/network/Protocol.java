@@ -26,15 +26,28 @@ package cz.kyngs.duinotools.wallet.network;
 
 import java.io.IOException;
 
+/**
+ * Protocol storing some actions.
+ *
+ * @author kyngs
+ */
 public class Protocol {
 
     private Network network;
     private double lastBalance;
 
+    /**
+     * @param network System network.
+     */
     public Protocol(Network network) {
         this.network = network;
     }
 
+    /**
+     * Protocol for retrieving balance.
+     * @return balance
+     * @throws IOException if I/O error occurs.
+     */
     public double getBalance() throws IOException {
         network.getAliveConnectionHandler().balanceRequestStart();
         network.write("BALA");
@@ -48,7 +61,4 @@ public class Protocol {
         return balance;
     }
 
-    public void setNetwork(Network network) {
-        this.network = network;
-    }
 }

@@ -32,6 +32,9 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * NOTE: This class is taken from Netty.
+ *
+ * @see java.io.Serializable
+ * @see java.util.AbstractSet
  */
 public class ConcurrentSet<E> extends AbstractSet<E> implements Serializable {
     private static final long serialVersionUID = -6761513279741915432L;

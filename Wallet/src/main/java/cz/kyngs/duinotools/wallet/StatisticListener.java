@@ -24,6 +24,12 @@
 
 package cz.kyngs.duinotools.wallet;
 
+/**
+ * Listener for statistic update.
+ *
+ * @author kyngs
+ * @see DataLoader
+ */
 public interface StatisticListener {
 
     void onStatisticsUpdate(DataLoader dataLoader);

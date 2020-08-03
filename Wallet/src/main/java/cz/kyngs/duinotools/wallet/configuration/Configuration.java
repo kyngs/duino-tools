@@ -24,10 +24,17 @@
 
 package cz.kyngs.duinotools.wallet.configuration;
 
+/**
+ * Program configuration
+ *
+ * @author kyngs
+ * @see cz.kyngs.duinotools.wallet.Wallet
+ */
 public class Configuration {
 
     private String username;
     private String password;
+
 
     public Configuration(String username, String password) {
         this.username = username;

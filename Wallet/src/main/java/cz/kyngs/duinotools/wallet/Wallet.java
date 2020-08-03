@@ -43,8 +43,18 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * Main class for Wallet. Does not extend JavaFXApplication.
+ *
+ * @author kyngs
+ */
 public class Wallet {
 
+    /**
+     * Instance of logger that is used all around the code
+     * @see Logger
+     * @see LogManager#createLogger
+     */
     public static final Logger LOGGER;
     private static Wallet instance; //Using singleton
 
@@ -60,7 +70,12 @@ public class Wallet {
     private DataLoader dataLoader;
     private boolean keepReconnecting;
 
-    public Wallet(String[] args) throws Exception {
+    /**
+     * Only constructor of Wallet, cannot be accessed from anywhere else.
+     * @param args Program arguments.
+     * @throws Exception Throws Exception for better crash handling.
+     */
+    private Wallet(String[] args) throws Exception {
         instance = this;
         System.setProperty("sun.awt.noerasebackground", "true");
         Properties props = System.getProperties();
@@ -72,6 +87,7 @@ public class Wallet {
         keepReconnecting = true;
         SwingUtilities.invokeAndWait(() -> window = new Window(this));
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        window.displayGuiScreen(new GuiWait("Loading"));
         try {
             network = new Network(this);
         } catch (IOException e) {
@@ -81,7 +97,6 @@ public class Wallet {
         Wallet.LOGGER.info(String.format("Server version is: %s", network.getVersion()));
 
         authCore = new AuthCore(this);
-
 
         parseArgs(args);
 
@@ -93,10 +108,22 @@ public class Wallet {
 
     }
 
+    /**
+     * Singleton Anti pattern. It is just here if anyone would've wanted to modify this code, through API and was lazy to do dependency Injection.
+     *
+     * @return Instance of Wallet.
+     * @deprecated Because it is singleton.
+     */
+    @Deprecated
     public static Wallet getInstance() {
         return instance;
     }
 
+    /**
+     * Main method, only instantiates new instance of Wallet.
+     *
+     * @param args Program arguments.
+     */
     public static void main(String[] args) {
         try {
             new Wallet(args);
@@ -105,14 +132,28 @@ public class Wallet {
         }
     }
 
+    /**
+     * @return Returns lock for authentication.
+     * @see Object#wait()
+     * @see Object#notifyAll()
+     */
     public Object getAuthenticationLock() {
         return authenticationLock;
     }
 
+    /**
+     * @return Returns program's network system.
+     * @see Network
+     */
     public Network getNetwork() {
         return network;
     }
 
+    /**
+     * Simple system for reconnecting. Usually called from AliveConnectionHandler
+     *
+     * @see cz.kyngs.duinotools.wallet.network.AliveConnectionHandler
+     */
     public void reconnect() {
         LOGGER.debug("Reconnecting");
         try {
@@ -123,7 +164,13 @@ public class Wallet {
         LOGGER.debug("RECONNECTED");
     }
 
-    public void reconnect(Configuration configuration){
+    /**
+     * Simple system for reconnecting with authentication afterwards. Usually called from AliveConnectionHandler
+     *
+     * @see cz.kyngs.duinotools.wallet.network.AliveConnectionHandler
+     * @see cz.kyngs.duinotools.wallet.configuration.Configuration
+     */
+    public void reconnect(Configuration configuration) {
         reconnect();
         authCore.authorize(configuration.getUsername(), configuration.getPassword(), result -> {
             if (result.getKey() == LoginResult.NO) {
@@ -132,6 +179,10 @@ public class Wallet {
         });
     }
 
+    /**
+     * @return Authentication system of program.
+     * @see cz.kyngs.duinotools.wallet.auth.AuthCore
+     */
     public AuthCore getAuthCore() {
         return authCore;
     }
@@ -175,22 +226,40 @@ public class Wallet {
 
     }
 
+    /**
+     * @return Returning window of program
+     * @see Window
+     */
     public Window getWindow() {
         return window;
     }
 
+    /**
+     * @return Returning system DataLoader.
+     * @see DataLoader
+     */
     public DataLoader getDataLoader() {
         return dataLoader;
     }
 
+    /**
+     * @return System configuration.
+     * @see Configuration
+     */
     public Configuration getConfiguration() {
         return configuration;
     }
 
+    /**
+     * Changes boolean value.
+     */
     public void stopReconnecting() {
         keepReconnecting = false;
     }
 
+    /**
+     * @return keepReconnecting
+     */
     public boolean keepReconnecting() {
         return keepReconnecting;
     }

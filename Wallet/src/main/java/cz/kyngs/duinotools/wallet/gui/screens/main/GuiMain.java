@@ -32,11 +32,22 @@ import cz.kyngs.duinotools.wallet.gui.GuiScreen;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Main landing screen after authentication and data download
+ *
+ * @author kyngs
+ * @see cz.kyngs.duinotools.wallet.gui.GuiScreen
+ * @see cz.kyngs.duinotools.wallet.StatisticListener
+ */
 public class GuiMain extends GuiScreen implements StatisticListener {
     private Wallet wallet;
     private JLabel balanceName, balanceValue;
     private boolean init;
 
+    /**
+     *
+     * @param wallet Main class
+     */
     public GuiMain(Wallet wallet) {
         init = false;
         this.wallet = wallet;
@@ -52,10 +63,14 @@ public class GuiMain extends GuiScreen implements StatisticListener {
 
     }
 
+    /**
+     * Unregistering listener on dispose.
+     */
     @Override
-    public void close() {
+    public void dispose() {
         wallet.getDataLoader().unregisterListener(this);
     }
+
 
     @Override
     public void update() {

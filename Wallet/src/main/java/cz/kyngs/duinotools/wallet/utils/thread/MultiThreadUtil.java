@@ -28,11 +28,24 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Joins many ThreadUtils into one powerful scheduler.
+ *
+ * @author kyngs
+ * @see ThreadUtil
+ */
 public class MultiThreadUtil {
 
     private final ThreadUtil[] threads;
     private final AtomicInteger splitter;
 
+    /**
+     * @param name     name of scheduler.
+     * @param count    Count of threads.
+     * @param runnable Parameter for ThreadUtil.
+     * @see ThreadUtil#ThreadUtil(String, Runnable)
+     * @see ThreadUtil#ThreadUtil(String)
+     */
     public MultiThreadUtil(String name, int count, @Nullable Runnable runnable) {
         if (count <= 0) throw new IllegalArgumentException("There needs to be at least one thread");
         threads = new ThreadUtil[count];
@@ -42,10 +55,17 @@ public class MultiThreadUtil {
         splitter = new AtomicInteger(0);
     }
 
+    /**
+     * @param name  Name of scheduler.
+     * @param count Count of threads.
+     */
     public MultiThreadUtil(String name, int count) {
         this(name, count, null);
     }
 
+    /**
+     * @param run Runnable to be scheduled on one of child schedulers.
+     */
     public void scheduleTask(Runnable run) {
         if (splitter.intValue() >= threads.length) {
             splitter.set(0);
@@ -54,6 +74,9 @@ public class MultiThreadUtil {
         splitter.set(1);
     }
 
+    /**
+     * Simple stopping logic
+     */
     public void stop() {
         for (ThreadUtil thread : threads) {
             thread.stop();

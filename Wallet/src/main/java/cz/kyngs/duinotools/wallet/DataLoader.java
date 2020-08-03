@@ -26,7 +26,6 @@ package cz.kyngs.duinotools.wallet;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import cz.kyngs.duinotools.wallet.network.Network;
 import cz.kyngs.duinotools.wallet.network.Protocol;
 import cz.kyngs.duinotools.wallet.utils.concurrent.ConcurrentSet;
 import cz.kyngs.duinotools.wallet.utils.thread.MultiThreadUtil;
@@ -41,8 +40,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Main DataLoader.
+ *
+ * @author kyngs
+ * @see cz.kyngs.duinotools.wallet.utils.thread.MultiThreadUtil
+ */
 public class DataLoader extends MultiThreadUtil {
 
+    /**
+     * Gson constant used for reading JSON API data.
+     */
     private static final Gson GSON;
 
     static {
@@ -54,6 +62,12 @@ public class DataLoader extends MultiThreadUtil {
     private double balance;
     private double price;
 
+    /**
+     * Main and only constructor
+     * @param wallet Main class
+     * @throws IOException
+     * @see Wallet
+     */
     public DataLoader(Wallet wallet) throws IOException {
         super("Data", 2);
         protocol = new Protocol(wallet.getNetwork());
@@ -64,14 +78,16 @@ public class DataLoader extends MultiThreadUtil {
         Wallet.LOGGER.info(String.format("Balance is: %s", balance));
     }
 
-    public void setNetwork(Network network){
-        protocol.setNetwork(network);
-    }
-
+    /**
+     * @return Current duino price according to API.
+     */
     public double getPrice() {
         return price;
     }
 
+    /**
+     * Starting tasks for retrieving data.
+     */
     private void startTasks() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -106,6 +122,11 @@ public class DataLoader extends MultiThreadUtil {
         }, TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(1));
     }
 
+    /**
+     * Task for parsing JSON from public API
+     *
+     * @throws IOException If I/O error occurs.
+     */
     private void parseJSON() throws IOException {
         try (InputStream in = new URL("https://raw.githubusercontent.com/revoxhere/duco-statistics/master/api.json").openStream()) {
             Map<String, String> values = GSON.fromJson(new InputStreamReader(in), new TypeToken<Map<String, String>>() {
@@ -114,14 +135,28 @@ public class DataLoader extends MultiThreadUtil {
         }
     }
 
+    /**
+     * Simple  method for adding Listener
+     *
+     * @param statisticListener listener to be added
+     */
     public void registerListener(StatisticListener statisticListener) {
         listeners.add(statisticListener);
     }
 
-    public void unregisterListener(StatisticListener listener){
+    /**
+     * Simple method for removing listener.
+     *
+     * @param listener listener to be removed.
+     */
+    public void unregisterListener(StatisticListener listener) {
         listeners.remove(listener);
     }
 
+
+    /**
+     * @return balance of user.
+     */
     public double getBalance() {
         return balance;
     }

@@ -24,7 +24,19 @@
 
 package cz.kyngs.duinotools.wallet;
 
+/**
+ * Stopping logic of the program. Called from Runtime.
+ *
+ * @author kyngs
+ * @see Runtime#addShutdownHook
+ */
 public class Stopper {
+
+    /**
+     * Constructor starting all the stopping logic.
+     *
+     * @param wallet Main class.
+     */
     public Stopper(Wallet wallet) {
         wallet.stopReconnecting();
         if (wallet.getNetwork() != null) wallet.getNetwork().close();

@@ -27,6 +27,15 @@ package cz.kyngs.duinotools.wallet.logging;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Console Stream used to wrap PrintStream
+ *
+ * @author kyngs
+ * @see java.io.OutputStream
+ * @see System#out
+ * @see System#err
+ * @see Logger
+ */
 public class ConsoleStream extends OutputStream {
 
     private final Level level;
@@ -34,7 +43,11 @@ public class ConsoleStream extends OutputStream {
     private final Logger logger;
     private StringBuilder line;
 
-
+    /**
+     * @param level       Level of logging
+     * @param errorStream is System.err
+     * @param logger      Logger as a backend
+     */
     public ConsoleStream(Level level, boolean errorStream, Logger logger) {
         this.level = level;
         this.errorStream = errorStream;
@@ -42,6 +55,12 @@ public class ConsoleStream extends OutputStream {
         line = new StringBuilder();
     }
 
+    /**
+     * Method of OutputStream
+     *
+     * @param b
+     * @throws IOException
+     */
     @Override
     public void write(int b) throws IOException {
 
@@ -54,11 +73,19 @@ public class ConsoleStream extends OutputStream {
         line.append((char) b);
     }
 
+    /**
+     * Method to print to console and clear StringBuilder
+     *
+     * @see StringBuilder
+     */
     private void printAndClear() {
         logger.write(line.toString(), level, getReflectionLevel());
         line = new StringBuilder();
     }
 
+    /**
+     * @return StackTrace level
+     */
     private int getReflectionLevel() {
         int reflectionLevel = 11;
         return errorStream ? -1 : reflectionLevel;

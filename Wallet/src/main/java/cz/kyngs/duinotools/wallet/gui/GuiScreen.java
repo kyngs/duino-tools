@@ -25,28 +25,45 @@
 package cz.kyngs.duinotools.wallet.gui;
 
 import javax.swing.*;
-import java.awt.*;
 
+/**
+ * abstract implementation of JPanel with some nice features
+ *
+ * @author kyngs
+ * @see JPanel
+ * @see Window
+ */
 public abstract class GuiScreen extends JPanel {
 
+    /**
+     * Called when firstly displayed and when window resizes.
+     */
     public abstract void update();
 
+    /**
+     * Simple method to calculate width of label.
+     *
+     * @param label label
+     * @return width
+     */
     protected int calculateWidth(JLabel label) {
         return getGraphics().getFontMetrics(label.getFont()).stringWidth(label.getText());
     }
 
+    /**
+     * Simple method to calculate height of label.
+     *
+     * @param label label
+     * @return height
+     */
     protected int calculateHeight(JLabel label) {
         int height = label.getFont().getSize();
         return label.getFont().getSize();
     }
 
-    protected void add(Component... components){
-        for (Component component : components){
-            add(component);
-        }
-    }
-
-
-    public void close() {
+    /**
+     * Called from window when GuiScreen is being replaced by another one.
+     */
+    public void dispose() {
     }
 }

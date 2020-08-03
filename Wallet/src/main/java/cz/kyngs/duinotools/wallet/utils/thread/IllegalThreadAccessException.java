@@ -24,8 +24,19 @@
 
 package cz.kyngs.duinotools.wallet.utils.thread;
 
+/**
+ * Called when some thread tries to access something where access from another thread is prohibited.
+ * Usually called from AccessUtils
+ *
+ * @author kyngs
+ * @see java.lang.RuntimeException
+ * @see AccessUtils
+ */
 public class IllegalThreadAccessException extends RuntimeException {
 
+    /**
+     * @param message Message of exception.
+     */
     public IllegalThreadAccessException(String message) {
         super(message);
     }

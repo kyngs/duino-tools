@@ -24,6 +24,11 @@
 
 package cz.kyngs.duinotools.wallet.logging;
 
+/**
+ * Basic enum for logging levels
+ *
+ * @author kyngs
+ */
 public enum Level {
 
     INFO, WARN, ERROR, DEBUG

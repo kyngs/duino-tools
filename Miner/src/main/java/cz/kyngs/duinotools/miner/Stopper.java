@@ -25,4 +25,7 @@
 package cz.kyngs.duinotools.miner;
 
 public class Stopper {
+    public Stopper(Miner miner) {
+        miner.getNetwork().close();
+    }
 }

@@ -32,25 +32,44 @@ import cz.kyngs.duinotools.wallet.utils.concurrent.ConcurrentSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * @author kyngs
+ * @see java.lang.Runnable
+ * Thread that checks if connection is alive, if not tries to reconnect. This needs to be done because TCP sockets are silly.
+ */
 public class AliveConnectionHandler implements Runnable {
 
     private final Wallet wallet;
     private final Set<Map.Entry<Thread, Integer>> timeout;
 
+    /**
+     * Only constructor.
+     * @param wallet Main class.
+     */
     public AliveConnectionHandler(Wallet wallet) {
         this.wallet = wallet;
         timeout = new ConcurrentSet<>();
         new Thread(this, "Connection Watcher").start();
     }
 
+    /**
+     * Start
+     */
     public void balanceRequestStart() {
         timeout.add(new EntryImpl<>(Thread.currentThread(), 0));
     }
 
+    /**
+     * End
+     */
     public void balanceRequestStop() {
         timeout.removeIf(entry -> entry.getKey() == Thread.currentThread());
     }
 
+    /**
+     * Main logic.
+     * @see FrameLimiter
+     */
     @Override
     public void run() {
         FrameLimiter frameLimiter = new FrameLimiter(20);

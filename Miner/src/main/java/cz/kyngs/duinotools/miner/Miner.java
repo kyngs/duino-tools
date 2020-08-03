@@ -49,6 +49,7 @@ public class Miner {
     private MinerThreadGroup minerThreadGroup;
 
     public Miner(String[] args) {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> new Stopper(this), "Stopper"));
         keepReconnecting = true;
         parseArgs(args);
         try {

@@ -32,6 +32,12 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.SocketException;
 
+/**
+ * System Network logic
+ *
+ * @author kyngs
+ * @see Socket
+ */
 public class Network {
 
     private BufferedReader bufferedReader;
@@ -40,6 +46,10 @@ public class Network {
     private Wallet wallet;
     private AliveConnectionHandler aliveConnectionHandler;
 
+    /**
+     * @param wallet Main class
+     * @throws IOException if server cannot be contacted.
+     */
     public Network(Wallet wallet) throws IOException {
         this.wallet = wallet;
 
@@ -56,10 +66,19 @@ public class Network {
 
     }
 
+    /**
+     * @return Alive connection handler
+     * @see AliveConnectionHandler
+     */
     public AliveConnectionHandler getAliveConnectionHandler() {
         return aliveConnectionHandler;
     }
 
+    /**
+     * Checks if version is legal
+     * @param version version to be tested
+     * @return true if version is OK, false otherwise.
+     */
     private boolean validVersion(String version) {
         try {
             Double.parseDouble(version);
@@ -69,10 +88,21 @@ public class Network {
         return true;
     }
 
+    /**
+     * @return Server version
+     * @see String
+     */
     public String getVersion() {
         return version;
     }
 
+    /**
+     * Writes to output stream.
+     * @param s String to be written
+     * @throws IOException if I/O error occurs.
+     * @see Socket#getOutputStream()
+     * @see java.io.OutputStream#write(int)
+     */
     public void write(String s) throws IOException {
         try {
             socket.getOutputStream().write(s.getBytes());
@@ -83,6 +113,12 @@ public class Network {
         }
     }
 
+    /**
+     * Used to read line.
+     * @return read line.
+     * @throws IOException
+     * @see BufferedReader#readLine()
+     */
     public String readLine() throws IOException {
         try {
             return bufferedReader.readLine();
@@ -94,6 +130,12 @@ public class Network {
         }
     }
 
+    /**
+     * Used to read String of defined length.
+     * @param length expected length.
+     * @return read String,
+     * @throws IOException
+     */
     public String read(int length) throws IOException {
         char[] chars = new char[length];
 
@@ -109,6 +151,10 @@ public class Network {
         return new String(chars);
     }
 
+    /**
+     * Closes socket
+     * @see Socket#close()
+     */
     public void close() {
         try {
             socket.close();
@@ -117,10 +163,17 @@ public class Network {
         }
     }
 
+    /**
+     * @return Returns socket.
+     */
     public Socket getSocket() {
         return socket;
     }
 
+    /**
+     * Connecting and reconnecting logic.
+     * @throws IOException if I/O error occurs.
+     */
     public void reconnect() throws IOException {
         synchronized (this) {
             socket.close();

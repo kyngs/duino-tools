@@ -30,6 +30,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * Simple Thread scheduler.
+ *
+ * @author kyngs
+ * @see java.lang.Runnable
+ */
 public class ThreadUtil implements Runnable {
 
     protected final List<Runnable> tasksToExecute;
@@ -37,6 +43,10 @@ public class ThreadUtil implements Runnable {
     private int taskID;
     private boolean running;
 
+    /**
+     * @param name Name of thread.
+     * @param runnable Runnable to be replaced.
+     */
     public ThreadUtil(String name, @Nullable Runnable runnable) {
         running = true;
         tasksToExecute = new CopyOnWriteArrayList<>();
@@ -48,10 +58,16 @@ public class ThreadUtil implements Runnable {
         taskID = 0;
     }
 
+    /**
+     * @param name Name of thread.
+     */
     public ThreadUtil(String name) {
         this(name, null);
     }
 
+    /**
+     * Simple stopping logic.
+     */
     public void stop() {
 
         running = false;
@@ -59,6 +75,9 @@ public class ThreadUtil implements Runnable {
 
     }
 
+    /**
+     * Main logic.
+     */
     @Override
     public void run() {
         AccessUtils.checkAccess(thisThread, "Someone tried to run ThreadUtil from wrong thread!");
@@ -66,7 +85,7 @@ public class ThreadUtil implements Runnable {
 
             while (tasksToExecute.isEmpty()) {
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(50); //Busy waiting here, I need to redo it. But not today.
                 } catch (InterruptedException ignored) {
                 }
             }
@@ -89,6 +108,9 @@ public class ThreadUtil implements Runnable {
         }
     }
 
+    /**
+     * @param runnable Runnable to be scheduled.
+     */
     public void scheduleTask(Runnable runnable) {
 
         tasksToExecute.add(runnable);

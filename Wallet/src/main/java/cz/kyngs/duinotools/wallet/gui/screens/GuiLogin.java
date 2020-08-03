@@ -32,6 +32,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
+/**
+ * Login screen of the program
+ *
+ * @author kyngs
+ * @see cz.kyngs.duinotools.wallet.gui.GuiScreen
+ * @see cz.kyngs.duinotools.wallet.auth.AuthCore
+ */
 public class GuiLogin extends GuiScreen {
 
     private final JTextField username;
@@ -45,6 +52,10 @@ public class GuiLogin extends GuiScreen {
     private final Wallet wallet;
     private final boolean waitingForAuth;
 
+    /**
+     * @param wallet         Wallet
+     * @param waitingForAuth if Wallet is waiting for authentication.
+     */
     public GuiLogin(Wallet wallet, boolean waitingForAuth) {
         this.wallet = wallet;
         this.waitingForAuth = waitingForAuth;

@@ -24,12 +24,25 @@
 
 package cz.kyngs.duinotools.wallet.utils.thread;
 
+/**
+ * Simple util class used to checking thread access.
+ *
+ * @author kyngs
+ * @see Thread
+ */
 public class AccessUtils {
 
+    /**
+     * @param expectedThread Expected thread to be accessing.
+     * @param errorMessage   Error message if current thread is not expected.
+     */
     public static void checkAccess(Thread expectedThread, String errorMessage) {
         if (expectedThread != Thread.currentThread()) throw new IllegalThreadAccessException(errorMessage);
     }
 
+    /**
+     * @param expectedThread Expected thread to be accessing.
+     */
     public static void checkAccess(Thread expectedThread) {
         checkAccess(expectedThread, "Illegal thread access!");
     }

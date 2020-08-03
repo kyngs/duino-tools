@@ -30,11 +30,20 @@ import javax.swing.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
+/**
+ * Main gui Window
+ *
+ * @author kyngs
+ * @see JFrame
+ */
 public class Window extends JFrame {
 
     private final Wallet wallet;
     private GuiScreen guiScreen;
 
+    /**
+     * @param wallet Main class
+     */
     public Window(Wallet wallet) {
         this.wallet = wallet;
         setLayout(null);
@@ -54,8 +63,13 @@ public class Window extends JFrame {
         setTitle("Duino Wallet - SNAPSHOT-1.0");
     }
 
+    /**
+     * Logic used to display GuiScreen
+     * @param guiScreen guiScreen to be displayed
+     * @see GuiScreen
+     */
     public void displayGuiScreen(GuiScreen guiScreen) {
-        if (this.guiScreen != null)this.guiScreen.close();
+        if (this.guiScreen != null) this.guiScreen.dispose();
         setIgnoreRepaint(false);
         setContentPane(guiScreen);
 
