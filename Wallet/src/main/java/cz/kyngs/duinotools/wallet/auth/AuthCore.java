@@ -73,9 +73,6 @@ public class AuthCore extends ThreadUtil {
                             case NO: {
                                 String input = wallet.getNetwork().readLine();
                                 reason = input == null ? "Undefined" : input.substring(1);
-                                if (reason.contentEquals("Undefined")) {
-                                    continue;
-                                }
                                 break;
                             }
                             case OK: {

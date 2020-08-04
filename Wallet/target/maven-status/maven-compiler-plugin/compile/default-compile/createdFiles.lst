@@ -1,6 +1,7 @@
 cz\kyngs\duinotools\wallet\DataLoader.class
 cz\kyngs\duinotools\wallet\DataLoader$3.class
 cz\kyngs\duinotools\wallet\utils\EntryImpl.class
+cz\kyngs\duinotools\wallet\auth\Reconnector.class
 cz\kyngs\duinotools\wallet\logging\Level.class
 cz\kyngs\duinotools\wallet\utils\thread\AccessUtils.class
 cz\kyngs\duinotools\wallet\network\Network.class

@@ -26,6 +26,7 @@ package cz.kyngs.duinotools.wallet;
 
 import cz.kyngs.duinotools.wallet.auth.AuthCore;
 import cz.kyngs.duinotools.wallet.auth.LoginResult;
+import cz.kyngs.duinotools.wallet.auth.Reconnector;
 import cz.kyngs.duinotools.wallet.configuration.Configuration;
 import cz.kyngs.duinotools.wallet.gui.Window;
 import cz.kyngs.duinotools.wallet.gui.screens.GuiInfo;
@@ -35,12 +36,17 @@ import cz.kyngs.duinotools.wallet.gui.screens.main.GuiMain;
 import cz.kyngs.duinotools.wallet.logging.LogManager;
 import cz.kyngs.duinotools.wallet.logging.Logger;
 import cz.kyngs.duinotools.wallet.network.Network;
+import cz.kyngs.duinotools.wallet.updater.Updater;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
@@ -52,14 +58,19 @@ public class Wallet {
 
     /**
      * Instance of logger that is used all around the code
+     *
      * @see Logger
      * @see LogManager#createLogger
      */
     public static final Logger LOGGER;
     private static Wallet instance; //Using singleton
+    public static final String VERSION;
+    public static final boolean DEBUG;
 
     static {
-        LOGGER = new LogManager().createLogger(true);
+        VERSION = "SNAPSHOT-1.0-1";
+        DEBUG = false;
+        LOGGER = new LogManager().createLogger(DEBUG);
     }
 
     private final Object authenticationLock;
@@ -70,8 +81,12 @@ public class Wallet {
     private DataLoader dataLoader;
     private boolean keepReconnecting;
 
+    private Properties properties;
+    private Updater updater;
+
     /**
      * Only constructor of Wallet, cannot be accessed from anywhere else.
+     *
      * @param args Program arguments.
      * @throws Exception Throws Exception for better crash handling.
      */
@@ -87,7 +102,12 @@ public class Wallet {
         keepReconnecting = true;
         SwingUtilities.invokeAndWait(() -> window = new Window(this));
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        window.displayGuiScreen(new GuiWait("Loading"));
+        window.displayGuiScreen(new GuiWait("Looking for updates"));
+        parseProperties();
+
+        updater = new Updater(this);
+
+        window.displayGuiScreen(new GuiWait("Connecting to duino server"));
         try {
             network = new Network(this);
         } catch (IOException e) {
@@ -106,6 +126,21 @@ public class Wallet {
 
         window.displayGuiScreen(new GuiMain(this));
 
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    private void parseProperties() throws URISyntaxException, IOException {
+        File dir = new File("wallet-resources");
+        if (!dir.exists()) dir.mkdir();
+        File settingsFile = new File(dir, "settings.properties");
+        if (!settingsFile.exists()) {
+            Files.copy(ClassLoader.getSystemResource("settings.properties").openStream(), Paths.get(settingsFile.toURI()));
+        }
+        properties = new Properties();
+        properties.load(settingsFile.toURI().toURL().openStream());
     }
 
     /**
@@ -171,12 +206,12 @@ public class Wallet {
      * @see cz.kyngs.duinotools.wallet.configuration.Configuration
      */
     public void reconnect(Configuration configuration) {
+        reconnect(configuration, new Reconnector(this));
+    }
+
+    public void reconnect(Configuration configuration, Reconnector reconnector) {
         reconnect();
-        authCore.authorize(configuration.getUsername(), configuration.getPassword(), result -> {
-            if (result.getKey() == LoginResult.NO) {
-                window.displayGuiScreen(new GuiInfo(String.format("Failed to authorize: %s", result.getValue()), () -> System.exit(1)));
-            }
-        });
+        authCore.authorize(configuration.getUsername(), configuration.getPassword(), reconnector);
     }
 
     /**

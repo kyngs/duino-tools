@@ -76,9 +76,9 @@ public class AliveConnectionHandler implements Runnable {
         while (wallet.keepReconnecting()) {
             frameLimiter.limit();
             for (Map.Entry<Thread, Integer> entry : timeout) {
-                if (entry.getValue() >= 60) {
-                    wallet.reconnect(wallet.getConfiguration());
+                if (entry.getValue() >= 120) {
                     timeout.clear();
+                    wallet.reconnect(wallet.getConfiguration());
                     break;
                 }
                 entry.setValue(entry.getValue() + 1);
