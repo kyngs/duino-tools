@@ -53,7 +53,7 @@ public class Network {
     public Network(Wallet wallet) throws IOException {
         this.wallet = wallet;
 
-        socket = new Socket("0.tcp.ngrok.io", 12300);
+        socket = new Socket(Wallet.SERVER_HOST, Wallet.SERVER_PORT);
 
         bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -177,7 +177,7 @@ public class Network {
     public void reconnect() throws IOException {
         synchronized (this) {
             socket.close();
-            socket = new Socket("0.tcp.ngrok.io", 12300);
+            socket = new Socket(Wallet.SERVER_HOST, Wallet.SERVER_PORT);
 
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 

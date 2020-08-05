@@ -30,11 +30,11 @@ import com.google.gson.reflect.TypeToken;
 import cz.kyngs.duinotools.wallet.Wallet;
 import cz.kyngs.duinotools.wallet.gui.screens.GuiWait;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Properties;
 
@@ -49,8 +49,12 @@ public class Updater {
 
     private Wallet wallet;
 
-    public Updater(Wallet wallet) throws IOException {
+    public Updater(Wallet wallet, boolean updated) throws IOException {
         this.wallet = wallet;
+        if (updated) {
+            File updater = new File("Updater.jar");
+            if (updater.exists()) updater.delete();
+        }
         if (Wallet.DEBUG) return;
         try (InputStream is = new URL("https://raw.githubusercontent.com/kyngs/duino-tools/master/Updater/Wallet/version.json").openStream()) {
             Map<String, String> properties = GSON.fromJson(new BufferedReader(new InputStreamReader(is)), new TypeToken<Map<String, String>>() {
@@ -66,17 +70,37 @@ public class Updater {
                 if (latestStable == null) return;
                 compareAndDownload(latestStable);
             }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
     }
 
-    private void compareAndDownload(String expectedVersion) {
+    private void compareAndDownload(String expectedVersion) throws IOException, URISyntaxException {
         if (Wallet.VERSION.contentEquals(expectedVersion)) {
             Wallet.LOGGER.info("Version up to date.");
             return;
         }
-        wallet.getWindow().displayGuiScreen(new GuiWait(String.format("Updating! \n From version %s to %s!", Wallet.VERSION, expectedVersion)));
-
-
+        wallet.getWindow().displayGuiScreen(new GuiWait(String.format("Updating! \n Downloading new version. \n %s", expectedVersion)));
+        File jar = new File(Wallet.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+        File newJar = new File(jar.getParent(), String.format("NEW%s", jar.getName()));
+        if (newJar.exists()) newJar.delete();
+        Files.copy(new URL(String.format("https://raw.githubusercontent.com/kyngs/duino-tools/master/Updater/Wallet/jars/%s.jar", expectedVersion)).openStream(), Paths.get(newJar.toURI()));
+        File updater = new File(jar.getParent(), "Updater.jar");
+        if (updater.exists()) updater.delete();
+        Files.copy(ClassLoader.getSystemResourceAsStream("Updater.jar"), Paths.get(updater.toURI()));
+        while (!updater.exists()) try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        File propertiesFile = new File(jar.getParent(), "update.properties");
+        Properties properties = new Properties();
+        properties.setProperty("old_file_path", jar.getAbsolutePath());
+        properties.setProperty("new_file_path", newJar.getAbsolutePath());
+        properties.setProperty("new_file_name", jar.getName());
+        properties.store(new OutputStreamWriter(new FileOutputStream(propertiesFile)), "DO NOT CHANGE THIS UNDER ANY CIRCUMSTANCES");
+        Runtime.getRuntime().exec("java -jar Updater.jar", null, jar.getParentFile());
+        System.exit(0);
     }
 
 }

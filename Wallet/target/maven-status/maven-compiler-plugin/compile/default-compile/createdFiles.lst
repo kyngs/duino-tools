@@ -25,6 +25,7 @@ cz\kyngs\duinotools\wallet\gui\screens\GuiLogin$2.class
 cz\kyngs\duinotools\wallet\utils\concurrent\ConcurrentSet.class
 cz\kyngs\duinotools\wallet\network\AliveConnectionHandler.class
 cz\kyngs\duinotools\wallet\auth\AuthCore$1.class
+cz\kyngs\duinotools\wallet\updater\Updater.class
 cz\kyngs\duinotools\wallet\utils\thread\ThreadUtil.class
 cz\kyngs\duinotools\wallet\logging\LogManager.class
 cz\kyngs\duinotools\wallet\utils\FrameLimiter.class
@@ -33,4 +34,5 @@ cz\kyngs\duinotools\wallet\gui\Window$1.class
 cz\kyngs\duinotools\wallet\auth\AuthCore.class
 cz\kyngs\duinotools\wallet\logging\ConsoleStream.class
 cz\kyngs\duinotools\wallet\logging\Logger.class
+cz\kyngs\duinotools\wallet\updater\Updater$1.class
 cz\kyngs\duinotools\wallet\gui\screens\main\GuiMain.class

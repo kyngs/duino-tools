@@ -99,7 +99,7 @@ public class DataLoader extends MultiThreadUtil {
                         for (StatisticListener statisticListener : listeners) {
                             statisticListener.onStatisticsUpdate(DataLoader.this);
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         Wallet.LOGGER.warn("Cannot fetch data from public API!", e);
                     }
                 });

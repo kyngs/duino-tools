@@ -60,7 +60,7 @@ public class Window extends JFrame {
         });
         setSize(500, 250);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("Duino Wallet - SNAPSHOT-1.0");
+        setTitle(String.format("Duino Wallet - %s", Wallet.VERSION));
     }
 
     /**

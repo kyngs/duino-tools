@@ -37,16 +37,21 @@ import cz.kyngs.duinotools.wallet.logging.LogManager;
 import cz.kyngs.duinotools.wallet.logging.Logger;
 import cz.kyngs.duinotools.wallet.network.Network;
 import cz.kyngs.duinotools.wallet.updater.Updater;
+import cz.kyngs.duinotools.wallet.utils.EntryImpl;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
 import javax.swing.*;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -66,23 +71,17 @@ public class Wallet {
     private static Wallet instance; //Using singleton
     public static final String VERSION;
     public static final boolean DEBUG;
+    public static final String SERVER_HOST;
+    public static final int SERVER_PORT;
 
     static {
         VERSION = "SNAPSHOT-1.0-1";
         DEBUG = false;
-        LOGGER = new LogManager().createLogger(DEBUG);
+        LOGGER = new LogManager().createLogger(true);
+        Map.Entry<String, Integer> serverIP = getServerIP();
+        SERVER_HOST = serverIP.getKey();
+        SERVER_PORT = serverIP.getValue();
     }
-
-    private final Object authenticationLock;
-    private Configuration configuration;
-    private Network network;
-    private AuthCore authCore;
-    private Window window;
-    private DataLoader dataLoader;
-    private boolean keepReconnecting;
-
-    private Properties properties;
-    private Updater updater;
 
     /**
      * Only constructor of Wallet, cannot be accessed from anywhere else.
@@ -105,7 +104,15 @@ public class Wallet {
         window.displayGuiScreen(new GuiWait("Looking for updates"));
         parseProperties();
 
-        updater = new Updater(this);
+        OptionParser optionParser = new OptionParser();
+        optionParser.allowsUnrecognizedOptions();
+        OptionSet optionSet = optionParser.parse(args);
+
+        try {
+            updater = new Updater(this, optionSet.has("updated"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         window.displayGuiScreen(new GuiWait("Connecting to duino server"));
         try {
@@ -126,6 +133,28 @@ public class Wallet {
 
         window.displayGuiScreen(new GuiMain(this));
 
+    }
+
+    private final Object authenticationLock;
+    private Configuration configuration;
+    private Network network;
+    private AuthCore authCore;
+    private Window window;
+    private DataLoader dataLoader;
+    private boolean keepReconnecting;
+
+    private Properties properties;
+    private Updater updater;
+
+    private static Map.Entry<String, Integer> getServerIP() {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://raw.githubusercontent.com/revoxhere/duino-coin/gh-pages/serverip.txt").openStream()));
+            String IP = reader.readLine();
+            int port = Integer.parseInt(reader.readLine());
+            return new EntryImpl<>(IP, port);
+        } catch (IOException e) {
+        }
+        return new EntryImpl<>("", 0);
     }
 
     public Properties getProperties() {

@@ -27,7 +27,6 @@ package cz.kyngs.duinotools.wallet.gui.screens.main;
 import cz.kyngs.duinotools.wallet.DataLoader;
 import cz.kyngs.duinotools.wallet.StatisticListener;
 import cz.kyngs.duinotools.wallet.Wallet;
-import cz.kyngs.duinotools.wallet.gui.GuiScreen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,16 +38,17 @@ import java.awt.*;
  * @see cz.kyngs.duinotools.wallet.gui.GuiScreen
  * @see cz.kyngs.duinotools.wallet.StatisticListener
  */
-public class GuiMain extends GuiScreen implements StatisticListener {
+public class GuiMain extends GuiMainScreen implements StatisticListener {
     private Wallet wallet;
     private JLabel balanceName, balanceValue;
     private boolean init;
 
     /**
-     *
      * @param wallet Main class
      */
     public GuiMain(Wallet wallet) {
+        super(wallet);
+        selectButton(overview);
         init = false;
         this.wallet = wallet;
         setLayout(null);
@@ -71,19 +71,18 @@ public class GuiMain extends GuiScreen implements StatisticListener {
         wallet.getDataLoader().unregisterListener(this);
     }
 
-
     @Override
-    public void update() {
+    public void updateIMPL() {
         Font valueFont = new Font("Tahoma", Font.PLAIN, 20);
         Font nameFont = new Font("Tahoma", Font.PLAIN, 14);
 
         balanceName.setFont(nameFont);
-        balanceName.setSize(calculateWidth(balanceName), calculateHeight(balanceName) + calculateHeight(balanceName)/2);
-        balanceName.setLocation(getWidth()/10, getHeight()/10);
+        balanceName.setSize(calculateWidth(balanceName), calculateHeight(balanceName) + calculateHeight(balanceName) / 2);
+        balanceName.setLocation(getWidth() / 10, getHeight() / 10);
 
         balanceValue.setFont(valueFont);
         balanceValue.setSize(calculateWidth(balanceValue), calculateHeight(balanceValue));
-        balanceValue.setLocation(getWidth()/10, balanceName.getY() + getHeight()/10);
+        balanceValue.setLocation(getWidth() / 10, balanceName.getY() + getHeight() / 10);
     }
 
     @Override
