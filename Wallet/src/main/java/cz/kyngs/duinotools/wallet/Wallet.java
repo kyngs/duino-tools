@@ -75,7 +75,7 @@ public class Wallet {
     public static final int SERVER_PORT;
 
     static {
-        VERSION = "SNAPSHOT-1.0-1";
+        VERSION = "SNAPSHOT-1.0-2";
         DEBUG = false;
         LOGGER = new LogManager().createLogger(true);
         Map.Entry<String, Integer> serverIP = getServerIP();
@@ -260,6 +260,7 @@ public class Wallet {
     private void parseArgs(String[] args) {
 
         OptionParser optionParser = new OptionParser();
+        optionParser.allowsUnrecognizedOptions();
 
         OptionSpec<String> usernameSpec = optionParser.accepts("username").withRequiredArg();
         OptionSpec<String> passwordSpec = optionParser.accepts("password").withRequiredArg();

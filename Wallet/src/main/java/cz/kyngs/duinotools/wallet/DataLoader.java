@@ -38,7 +38,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Main DataLoader.
@@ -61,9 +62,12 @@ public class DataLoader extends MultiThreadUtil {
     private final Set<StatisticListener> listeners;
     private double balance;
     private double price;
+    private double lastBalance;
+    private double profitPerMinute;
 
     /**
      * Main and only constructor
+     *
      * @param wallet Main class
      * @throws IOException
      * @see Wallet
@@ -72,10 +76,19 @@ public class DataLoader extends MultiThreadUtil {
         super("Data", 2);
         protocol = new Protocol(wallet.getNetwork());
         listeners = new ConcurrentSet<>();
+        protocol.getBalance();
+        protocol.getBalance();
         balance = protocol.getBalance();
+
         parseJSON();
         startTasks();
+        profitPerMinute = -1;
+        lastBalance = balance;
         Wallet.LOGGER.info(String.format("Balance is: %s", balance));
+    }
+
+    public double getProfitPerMinute() {
+        return profitPerMinute;
     }
 
     /**
@@ -104,7 +117,7 @@ public class DataLoader extends MultiThreadUtil {
                     }
                 });
             }
-        }, TimeUnit.SECONDS.toMillis(91), TimeUnit.SECONDS.toMillis(91));
+        }, SECONDS.toMillis(91), SECONDS.toMillis(91));
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -119,7 +132,17 @@ public class DataLoader extends MultiThreadUtil {
                     }
                 });
             }
-        }, TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(1));
+        }, SECONDS.toMillis(1), SECONDS.toMillis(1));
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                profitPerMinute = balance - lastBalance;
+                lastBalance = balance;
+                for (StatisticListener statisticListener : listeners) {
+                    statisticListener.onProfitUpdate(DataLoader.this);
+                }
+            }
+        }, SECONDS.toMillis(60), SECONDS.toMillis(60));
     }
 
     /**

@@ -30,7 +30,6 @@ public class GuiStatistics extends GuiMainScreen {
     public GuiStatistics(Wallet wallet) {
         super(wallet);
         selectButton(statistics);
-
     }
 
     @Override

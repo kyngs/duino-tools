@@ -36,4 +36,6 @@ public interface StatisticListener {
 
     void onBalanceUpdate(DataLoader dataLoader);
 
+    void onProfitUpdate(DataLoader dataLoader);
+
 }
