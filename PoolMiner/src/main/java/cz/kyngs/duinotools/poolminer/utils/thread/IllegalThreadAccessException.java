@@ -22,43 +22,23 @@
  * SOFTWARE.
  */
 
-package cz.kyngs.duinotools.wallet.network;
-
-import java.io.IOException;
+package cz.kyngs.duinotools.poolminer.utils.thread;
 
 /**
- * Protocol storing some actions.
+ * Called when some thread tries to access something where access from another thread is prohibited.
+ * Usually called from AccessUtils
  *
  * @author kyngs
+ * @see RuntimeException
+ * @see AccessUtils
  */
-public class Protocol {
-
-    private final Network network;
-    private double lastBalance;
+public class IllegalThreadAccessException extends RuntimeException {
 
     /**
-     * @param network System network.
+     * @param message Message of exception.
      */
-    public Protocol(Network network) {
-        this.network = network;
-    }
-
-    /**
-     * Protocol for retrieving balance.
-     * @return balance
-     * @throws IOException if I/O error occurs.
-     */
-    public double getBalance() throws IOException {
-        network.getAliveConnectionHandler().balanceRequestStart();
-        network.write("BALA");
-        double balance = lastBalance;
-        try {
-            balance = Double.parseDouble(network.read(1024));
-            lastBalance = balance;
-        } catch (NumberFormatException | IOException ignored) {
-        }
-        network.getAliveConnectionHandler().balanceRequestStop();
-        return balance;
+    public IllegalThreadAccessException(String message) {
+        super(message);
     }
 
 }

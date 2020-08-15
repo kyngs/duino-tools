@@ -22,43 +22,17 @@
  * SOFTWARE.
  */
 
-package cz.kyngs.duinotools.wallet.network;
+package cz.kyngs.duinotools.poolminer.utils;
 
 import java.io.IOException;
+import java.io.InputStream;
 
-/**
- * Protocol storing some actions.
- *
- * @author kyngs
- */
-public class Protocol {
+public class NetUtil {
 
-    private final Network network;
-    private double lastBalance;
-
-    /**
-     * @param network System network.
-     */
-    public Protocol(Network network) {
-        this.network = network;
-    }
-
-    /**
-     * Protocol for retrieving balance.
-     * @return balance
-     * @throws IOException if I/O error occurs.
-     */
-    public double getBalance() throws IOException {
-        network.getAliveConnectionHandler().balanceRequestStart();
-        network.write("BALA");
-        double balance = lastBalance;
-        try {
-            balance = Double.parseDouble(network.read(1024));
-            lastBalance = balance;
-        } catch (NumberFormatException | IOException ignored) {
-        }
-        network.getAliveConnectionHandler().balanceRequestStop();
-        return balance;
+    public static String read(InputStream inputStream, int length) throws IOException {
+        byte[] bytes = new byte[length];
+        inputStream.read(bytes);
+        return new String(bytes);
     }
 
 }

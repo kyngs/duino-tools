@@ -43,8 +43,8 @@ public class Network {
     private BufferedReader bufferedReader;
     private Socket socket;
     private String version;
-    private Wallet wallet;
-    private AliveConnectionHandler aliveConnectionHandler;
+    private final Wallet wallet;
+    private final AliveConnectionHandler aliveConnectionHandler;
 
     /**
      * @param wallet Main class

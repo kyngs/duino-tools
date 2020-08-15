@@ -47,7 +47,7 @@ public class Updater {
         GSON = new Gson();
     }
 
-    private Wallet wallet;
+    private final Wallet wallet;
 
     public Updater(Wallet wallet, boolean updated) throws IOException {
         this.wallet = wallet;

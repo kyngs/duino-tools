@@ -33,11 +33,11 @@ import cz.kyngs.duinotools.wallet.gui.screens.GuiInfo;
 import cz.kyngs.duinotools.wallet.gui.screens.GuiLogin;
 import cz.kyngs.duinotools.wallet.gui.screens.GuiWait;
 import cz.kyngs.duinotools.wallet.gui.screens.main.GuiMain;
-import cz.kyngs.duinotools.wallet.logging.LogManager;
-import cz.kyngs.duinotools.wallet.logging.Logger;
 import cz.kyngs.duinotools.wallet.network.Network;
 import cz.kyngs.duinotools.wallet.updater.Updater;
 import cz.kyngs.duinotools.wallet.utils.EntryImpl;
+import cz.kyngs.logger.LogManager;
+import cz.kyngs.logger.Logger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -65,7 +65,7 @@ public class Wallet {
      * Instance of logger that is used all around the code
      *
      * @see Logger
-     * @see LogManager#createLogger
+     * @see cz.kyngs.logger.LogManager#createLogger
      */
     public static final Logger LOGGER;
     private static Wallet instance; //Using singleton

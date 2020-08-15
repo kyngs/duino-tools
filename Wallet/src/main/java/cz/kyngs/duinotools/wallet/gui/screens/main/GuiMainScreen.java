@@ -43,7 +43,7 @@ public abstract class GuiMainScreen extends GuiScreen {
     protected JButton overview;
     protected JButton statistics;
     protected JButton settings;
-    private JMenuBar jMenuBar;
+    private final JMenuBar jMenuBar;
 
     public GuiMainScreen(Wallet wallet) {
         jMenuBar = new JMenuBar();

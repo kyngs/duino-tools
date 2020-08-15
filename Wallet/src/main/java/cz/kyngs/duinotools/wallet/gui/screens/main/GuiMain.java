@@ -40,10 +40,17 @@ import java.text.DecimalFormat;
  * @see cz.kyngs.duinotools.wallet.StatisticListener
  */
 public class GuiMain extends GuiMainScreen implements StatisticListener {
-    private Wallet wallet;
-    private JLabel balanceName, balanceValue, profitName, profitValue, costName, costValue, fiatName, fiatValue;
+    private final Wallet wallet;
+    private final JLabel balanceName;
+    private final JLabel balanceValue;
+    private final JLabel profitName;
+    private final JLabel profitValue;
+    private final JLabel costName;
+    private final JLabel costValue;
+    private final JLabel fiatName;
+    private final JLabel fiatValue;
     private boolean init;
-    private DecimalFormat decimalFormat;
+    private final DecimalFormat decimalFormat;
 
     /**
      * @param wallet Main class

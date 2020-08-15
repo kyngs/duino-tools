@@ -22,43 +22,29 @@
  * SOFTWARE.
  */
 
-package cz.kyngs.duinotools.wallet.network;
-
-import java.io.IOException;
+package cz.kyngs.duinotools.poolminer.utils.thread;
 
 /**
- * Protocol storing some actions.
+ * Simple util class used to checking thread access.
  *
  * @author kyngs
+ * @see Thread
  */
-public class Protocol {
-
-    private final Network network;
-    private double lastBalance;
+public class AccessUtils {
 
     /**
-     * @param network System network.
+     * @param expectedThread Expected thread to be accessing.
+     * @param errorMessage   Error message if current thread is not expected.
      */
-    public Protocol(Network network) {
-        this.network = network;
+    public static void checkAccess(Thread expectedThread, String errorMessage) {
+        if (expectedThread != Thread.currentThread()) throw new IllegalThreadAccessException(errorMessage);
     }
 
     /**
-     * Protocol for retrieving balance.
-     * @return balance
-     * @throws IOException if I/O error occurs.
+     * @param expectedThread Expected thread to be accessing.
      */
-    public double getBalance() throws IOException {
-        network.getAliveConnectionHandler().balanceRequestStart();
-        network.write("BALA");
-        double balance = lastBalance;
-        try {
-            balance = Double.parseDouble(network.read(1024));
-            lastBalance = balance;
-        } catch (NumberFormatException | IOException ignored) {
-        }
-        network.getAliveConnectionHandler().balanceRequestStop();
-        return balance;
+    public static void checkAccess(Thread expectedThread) {
+        checkAccess(expectedThread, "Illegal thread access!");
     }
 
 }
