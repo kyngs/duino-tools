@@ -25,6 +25,7 @@
 package cz.kyngs.duinotools.poolminer;
 
 import cz.kyngs.duinotools.poolminer.network.NetworkPool;
+import cz.kyngs.duinotools.poolminer.updater.Updater;
 import cz.kyngs.duinotools.poolminer.utils.EntryImpl;
 import cz.kyngs.duinotools.poolminer.utils.NetUtil;
 import cz.kyngs.logger.LogManager;
@@ -45,8 +46,12 @@ import java.util.TimerTask;
 public class PoolMiner {
 
     public static final Logger LOGGER;
+    public static final boolean DEBUG;
+    public static final String VERSION;
 
     static {
+        DEBUG = false;
+        VERSION = "SNAPSHOT-1.0";
         LOGGER = new LogManager()
                 .createLogger(true);
     }
@@ -60,6 +65,14 @@ public class PoolMiner {
         if (username.contentEquals("revox")) {
             LOGGER.error("You cannot mine for revox, he thinks that java is same as javascript.");
             System.exit(1);
+        }
+
+        LOGGER.info("Checking for updates!");
+
+        try {
+            new Updater(this);
+        } catch (IOException e) {
+            LOGGER.warn("Unable to check for updates!", e);
         }
 
         LOGGER.info("Fetching server IP");
