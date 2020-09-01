@@ -109,7 +109,7 @@ public class Updater implements Runnable {
             }
 
         }, "IP Updater");
-        ipUpdater.setDaemon(true);
+        ipUpdater.setDaemon(false);
         ipUpdater.start();
 
         Thread thread = new Thread(this, "Main loop");
@@ -136,8 +136,11 @@ public class Updater implements Runnable {
     public void run() {
         while (true) {
             try {
+                System.out.println("s");
                 Thread.sleep(1500);
+                System.out.println("s");
                 boolean serverStatus = retrieveServerStatus();
+                System.out.println("s");
                 sendApiRequest(Status.byBool(serverStatus), "0y426sbfp90y");
                 Thread.sleep(1500);
                 Status statisticsStatus = retrieveStatisticsStatus();
