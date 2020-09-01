@@ -136,13 +136,12 @@ public class Updater implements Runnable {
     public void run() {
         while (true) {
             try {
-                System.out.println("s");
-                Thread.sleep(3000);
-                System.out.println("s");
+                Thread.sleep(1500);
+
                 boolean serverStatus = retrieveServerStatus();
-                System.out.println("s");
+
                 sendApiRequest(Status.byBool(serverStatus), "0y426sbfp90y");
-                Thread.sleep(3000);
+                Thread.sleep(1500);
                 Status statisticsStatus = retrieveStatisticsStatus();
                 sendApiRequest(statisticsStatus, "ym6bpq3nq67b");
             } catch (InterruptedException e) {
@@ -182,7 +181,9 @@ public class Updater implements Runnable {
             line = bufferedReader.readLine();
         }
 
-        System.out.println(sb.toString());
+        httpPatch.releaseConnection();
+
+        LOGGER.info(String.format("SENT! %s", sb.toString()));
 
     }
 
