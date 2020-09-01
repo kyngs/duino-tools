@@ -153,6 +153,8 @@ public class Updater implements Runnable {
 
     private void sendApiRequest(Status status, String compID) throws IOException {
 
+        LOGGER.info("Sending API request");
+
         String command = String.format("https://api.statuspage.io/v1/pages/hh0g5sfyc1h0/components/%s?api_key=%s", compID, apiKey);
 
         HttpPatch httpPatch = new HttpPatch(command);
