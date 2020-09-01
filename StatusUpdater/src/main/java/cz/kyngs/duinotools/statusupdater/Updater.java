@@ -137,12 +137,12 @@ public class Updater implements Runnable {
         while (true) {
             try {
                 System.out.println("s");
-                Thread.sleep(1500);
+                Thread.sleep(3000);
                 System.out.println("s");
                 boolean serverStatus = retrieveServerStatus();
                 System.out.println("s");
                 sendApiRequest(Status.byBool(serverStatus), "0y426sbfp90y");
-                Thread.sleep(1500);
+                Thread.sleep(3000);
                 Status statisticsStatus = retrieveStatisticsStatus();
                 sendApiRequest(statisticsStatus, "ym6bpq3nq67b");
             } catch (InterruptedException e) {
