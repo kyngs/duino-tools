@@ -22,43 +22,30 @@
  * SOFTWARE.
  */
 
-package cz.kyngs.duinotools.wallet.network;
+package cz.kyngs.duinotools.statusupdater;
 
-import java.io.IOException;
+import java.util.Map;
 
-/**
- * Protocol storing some actions.
- *
- * @author kyngs
- */
-public class Protocol {
+public class EntryImpl<K, V> implements Map.Entry<K, V> {
 
-    private final Network network;
-    private double lastBalance;
+    private final K key;
+    private V value;
 
-    /**
-     * @param network System network.
-     */
-    public Protocol(Network network) {
-        this.network = network;
+    public EntryImpl(K key, V value) {
+        this.key = key;
+        this.value = value;
     }
 
-    /**
-     * Protocol for retrieving balance.
-     * @return balance
-     * @throws IOException if I/O error occurs.
-     */
-    public double getBalance() throws IOException {
-        network.getAliveConnectionHandler().balanceRequestStart();
-        network.write("BALA");
-        double balance = lastBalance;
-        try {
-            balance = Double.parseDouble(network.read(1024));
-            lastBalance = balance;
-        } catch (NumberFormatException | IOException ignored) {
-        }
-        network.getAliveConnectionHandler().balanceRequestStop();
-        return balance;
+    public K getKey() {
+        return key;
     }
 
+    public V getValue() {
+        return value;
+    }
+
+    public V setValue(V value) {
+        this.value = value;
+        return value;
+    }
 }

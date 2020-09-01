@@ -26,7 +26,7 @@ package cz.kyngs.duinotools.wallet;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import cz.kyngs.duinotools.wallet.network.Protocol;
+import cz.kyngs.duinotools.wallet.network.protocol.Protocol;
 import cz.kyngs.duinotools.wallet.utils.concurrent.ConcurrentSet;
 import cz.kyngs.duinotools.wallet.utils.thread.MultiThreadUtil;
 
@@ -182,5 +182,9 @@ public class DataLoader extends MultiThreadUtil {
      */
     public double getBalance() {
         return balance;
+    }
+
+    public Protocol getProtocol() {
+        return protocol;
     }
 }

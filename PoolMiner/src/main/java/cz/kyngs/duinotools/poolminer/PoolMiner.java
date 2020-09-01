@@ -88,13 +88,13 @@ public class PoolMiner {
         }
 
         LOGGER.info("Starting network pool!");
-        LOGGER.info(String.format("Estimated network pool startup time: %d seconds!", threadCount * 16));
+        LOGGER.info(String.format("Estimated network pool startup time: %d seconds!", threadCount * 8));
         Instant start = Instant.now();
 
 
         NetworkPool[] networks = new NetworkPool[threadCount];
         for (int i = 0; i < networks.length; i++) {
-            networks[i] = new NetworkPool(username, IP.getKey(), IP.getValue(), 8);
+            networks[i] = new NetworkPool(username, IP.getKey(), IP.getValue(), 4);
         }
 
 

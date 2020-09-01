@@ -22,54 +22,19 @@
  * SOFTWARE.
  */
 
-package cz.kyngs.duinotools.wallet.gui;
+package cz.kyngs.duinotools.wallet.network.protocol.throwables;
 
-import javax.swing.*;
-import java.awt.*;
+public class ProtocolException extends Exception {
 
-/**
- * abstract implementation of JPanel with some nice features
- *
- * @author kyngs
- * @see JPanel
- * @see Window
- */
-public abstract class GuiScreen extends JPanel {
-
-    /**
-     * Called when firstly displayed and when window resizes.
-     */
-    public abstract void update();
-
-    /**
-     * Simple method to calculate width of label.
-     *
-     * @param label label
-     * @return width
-     */
-    protected int calculateWidth(JLabel label) {
-        return getGraphics().getFontMetrics(label.getFont()).stringWidth(label.getText());
+    public ProtocolException(String message) {
+        super(message);
     }
 
-    /**
-     * Simple method to calculate height of label.
-     *
-     * @param label label
-     * @return height
-     */
-    protected int calculateHeight(JLabel label) {
-        int height = label.getFont().getSize();
-        return label.getFont().getSize();
+    public ProtocolException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    /**
-     * Called from window when GuiScreen is being replaced by another one.
-     */
-    public void dispose() {
+    public ProtocolException(Throwable cause) {
+        super(cause);
     }
-
-    protected void center(Component component, int y) {
-        component.setLocation(getWidth() / 2 - component.getWidth() / 2, y);
-    }
-
 }

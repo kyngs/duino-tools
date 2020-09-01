@@ -43,6 +43,7 @@ public abstract class GuiMainScreen extends GuiScreen {
     protected JButton overview;
     protected JButton statistics;
     protected JButton settings;
+    protected JButton donate;
     private final JMenuBar jMenuBar;
 
     public GuiMainScreen(Wallet wallet) {
@@ -59,7 +60,11 @@ public abstract class GuiMainScreen extends GuiScreen {
         settings = new JButton("Settings");
         settings.addActionListener(e -> window.displayGuiScreen(new GuiSettings(wallet)));
 
+        donate = new JButton("Donate");
+        donate.addActionListener(e -> window.displayGuiScreen(new GuiDonate(wallet)));
+
         jMenuBar.add(overview);
+        jMenuBar.add(donate);
         jMenuBar.add(statistics);
         jMenuBar.add(settings);
 
