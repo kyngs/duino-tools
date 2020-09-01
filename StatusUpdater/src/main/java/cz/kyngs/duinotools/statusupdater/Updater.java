@@ -177,6 +177,8 @@ public class Updater implements Runnable {
             line = bufferedReader.readLine();
         }
 
+        System.out.println(sb.toString());
+
     }
 
     private Map<String, String> getComponentProps(String compID) throws IOException {
