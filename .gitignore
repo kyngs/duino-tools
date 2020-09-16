@@ -33,6 +33,3 @@ hs_err_pid*
 # program files #
 *.properties
 .wallet-resources
-
-#Hidden code
-/DuinoServer/

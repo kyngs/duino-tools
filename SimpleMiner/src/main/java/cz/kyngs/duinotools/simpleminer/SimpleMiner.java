@@ -24,6 +24,7 @@
 
 package cz.kyngs.duinotools.simpleminer;
 
+import cz.kyngs.duinotools.simpleminer.updater.Updater;
 import cz.kyngs.duinotools.simpleminer.utils.EntryImpl;
 import cz.kyngs.duinotools.simpleminer.utils.NetUtil;
 import cz.kyngs.logger.LogManager;
@@ -42,19 +43,33 @@ import java.util.TimerTask;
 public class SimpleMiner {
 
     public static final Logger LOGGER;
+    public static final boolean DEBUG;
+    public static final String VERSION;
 
     static {
         LOGGER = new LogManager()
                 .createLogger(true);
+        DEBUG = false;
+        VERSION = "1.0";
     }
 
     private final String username;
     private final int threadCount;
-    private final String hostname;
-    private final int port;
+    private String hostname;
+    private int port;
     private final MinerThread[] threads;
+    private Updater updater;
 
     public SimpleMiner(String[] args) {
+
+        LOGGER.info("Checking for updates!");
+
+        try {
+            updater = new Updater();
+        } catch (IOException e) {
+            LOGGER.info("Failed to check for updates!");
+        }
+
         username = getInput("Enter your username: ", args, 0);
         threadCount = Integer.parseInt(getInput("Enter thread count: ", args, 1));
 
@@ -62,15 +77,68 @@ public class SimpleMiner {
 
         hostname = IP.getKey();
         port = IP.getValue();
+        threads = new MinerThread[threadCount];
 
         try {
-            createAndExitInformationSocket(hostname, port, username);
+            start();
         } catch (IOException e) {
-            LOGGER.error("I/O error occurred while contacting duino server!", e);
-            System.exit(1);
+            LOGGER.error("Failed to connect to duino server!", e);
+            return;
         }
 
-        threads = new MinerThread[threadCount];
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                int hashrate = 0;
+                for (MinerThread thread : threads) {
+                    if (thread == null) continue;
+                    hashrate += thread.getHashCount();
+                    thread.resetHashCount();
+                }
+                if (hashrate == 0) {
+                    LOGGER.info("UH OH! Hashrate dropped to zero, restarting!");
+                    restart();
+                    return;
+                }
+                LOGGER.info(String.format("HASHRATE: %d H/S", hashrate));
+            }
+        }, 1000, 1000);
+
+    }
+
+    private void restart() {
+
+        stop();
+
+        LOGGER.info("Reconnecting in 5 seconds!");
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            return;
+        }
+
+        try {
+            start();
+            LOGGER.info("Connection established!");
+        } catch (IOException e) {
+            restart();
+        }
+
+    }
+
+    public static void main(String[] args) {
+        new SimpleMiner(args);
+    }
+
+    private void start() throws IOException {
+
+        Map.Entry<String, Integer> IP = getServerIP();
+
+        hostname = IP.getKey();
+        port = IP.getValue();
+
+        createAndExitInformationSocket(hostname, port, username);
 
         for (int i = 0; i < threads.length; i++) {
             threads[i] = new MinerThread(username, hostname, port);
@@ -80,23 +148,15 @@ public class SimpleMiner {
                 e.printStackTrace();
             }
         }
-
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                int hashrate = 0;
-                for (MinerThread thread : threads) {
-                    hashrate += thread.getHashCount();
-                    thread.resetHashCount();
-                }
-                LOGGER.info(String.format("HASHRATE: %d", hashrate));
-            }
-        }, 1000, 1000);
-
     }
 
-    public static void main(String[] args) {
-        new SimpleMiner(args);
+    private void stop() {
+        for (int i = 0; i < threads.length; i++) {
+            MinerThread minerThread = threads[i];
+            if (minerThread == null) continue;
+            minerThread.stop();
+            threads[i] = null;
+        }
     }
 
     private static Map.Entry<String, Integer> getServerIP() {

@@ -25,7 +25,9 @@
 package cz.kyngs.duinotools.simpleminer;
 
 import cz.kyngs.duinotools.simpleminer.utils.NetUtil;
+import cz.kyngs.duinotools.simpleminer.utils.Sha1;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -39,6 +41,7 @@ public class MinerThread implements Runnable {
     private final String JOB_COMMAND;
     private final Thread thread;
     private int hashCount;
+    private Socket socket;
 
     public MinerThread(String username, String hostname, int port) {
         this.hostname = hostname;
@@ -70,7 +73,7 @@ public class MinerThread implements Runnable {
     @Override
     public void run() {
         try {
-            Socket socket = new Socket(hostname, port);
+            socket = new Socket(hostname, port);
             OutputStream out = socket.getOutputStream();
             InputStream in = socket.getInputStream();
             NetUtil.read(in, 3);
@@ -84,10 +87,15 @@ public class MinerThread implements Runnable {
                 String correct = job[1];
                 for (int i = 0; i != 100 * diff + 1; i++) {
                     hashCount++;
-                    String hash = sha1(job[0] + i);
+                    String hash = Sha1.hash(job[0] + i);
                     if (hash.contentEquals(correct)) {
                         out.write(String.valueOf(i).getBytes());
-                        NetUtil.read(in, 1024); //Just here to release the buffer
+                        String resp = NetUtil.read(in, 1024).trim();
+                        if (resp.contentEquals("GOOD")) {
+                            SimpleMiner.LOGGER.info("Yay! Share accepted!");
+                        } else {
+                            SimpleMiner.LOGGER.warn("OOPS! Share rejected!");
+                        }
                     }
                 }
             }
@@ -96,4 +104,12 @@ public class MinerThread implements Runnable {
         }
     }
 
+    public void stop() {
+        thread.interrupt();
+        if (socket != null) try {
+            socket.close();
+        } catch (IOException e) {
+            return;
+        }
+    }
 }
